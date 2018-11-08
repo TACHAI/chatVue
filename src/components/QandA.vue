@@ -199,7 +199,8 @@
         })
         this.$refs.chatContent.scrollTop = 99999
         this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine//webWord.do', {
-            'word': this.word,
+        // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
+          'word': this.word,
             'sessionId': global_.sessionId
           }, {
             emulateJSON: true
@@ -416,7 +417,8 @@
         })
         this.$refs.chatContent.scrollTop = 99999
         this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine//webWord.do', {
-            'word': this.word,
+        // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
+          'word': this.word,
             'sessionId': global_.sessionId
           }, {
             emulateJSON: true
@@ -595,6 +597,7 @@
 
   .question-content {
     display: inline-block;
+    text-align:left;
     background-color: #41BF76;
     padding: 12px 18px;
     color: #fff;

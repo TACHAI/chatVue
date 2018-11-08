@@ -34,31 +34,50 @@
   export default {
     data() {
       return {
-        questionList: [{
-          question: '办理劳务派遣许可证的条件',
-          answer: '经营劳务派遣业务应当具备下列...'
-        }, {
-          question: '数字证书丢失了怎么办',
-          answer: '请携带好有效证件（证件需求参...'
-        }, {
-          question: '怎么查询退工登记备案的结果',
-          answer: '窗口办理退工登记备案的去徐汇...'
-        }, {
-          question: '临时占用城市道路许可审批结果是什么',
-          answer: '《上海市路政管理行政许可证》哦~ '
-        }, {
-          question: '技术合同分为几类',
-          answer: '分为四类：1.技术开发合同，2技...'
-        }, {
-          question: '上海市劳务派遣行政许可申请平台的网址是什么？',
-          answer: '上海市劳务派遣行政许可申请平...'
-        }],
+        // questionList: [
+        //   {
+        //   question: '办理劳务派遣许可证的条件',
+        //   answer: '经营劳务派遣业务应当具备下列...'
+        // }, {
+        //   question: '数字证书丢失了怎么办',
+        //   answer: '请携带好有效证件（证件需求参...'
+        // }, {
+        //   question: '怎么查询退工登记备案的结果',
+        //   answer: '窗口办理退工登记备案的去徐汇...'
+        // }, {
+        //   question: '临时占用城市道路许可审批结果是什么',
+        //   answer: '《上海市路政管理行政许可证》哦~ '
+        // }, {
+        //   question: '技术合同分为几类',
+        //   answer: '分为四类：1.技术开发合同，2技...'
+        // }, {
+        //   question: '上海市劳务派遣行政许可申请平台的网址是什么？',
+        //   answer: '上海市劳务派遣行政许可申请平...'
+        // }],
+        questionList:[],
         selectedQuestion: '',
         timerKey: ''
       }
     },
     created() {
       this.startSxroll();
+    },
+    mounted(){
+      var that = this;
+      this.$http.get('http://40.73.102.21/hotquestion/reportlist.do')
+        .then((res) => {
+          // todo 把热门问答放到这里来
+          console.info("------------------"+res.data.total)
+          var result = res.data.rows;
+          // console.info("------------------"+result.data.total)
+          result.forEach(function (p) {
+            let data = {
+              question: p.question,
+              answer: p.answer
+            }
+            that.questionList.push(data)
+          })
+        })
     },
     methods: {
       // 换一批
@@ -178,7 +197,7 @@
 
   .list h2 {
     color: #555966;
-    font-size: 12px;
+    font-size: 14px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

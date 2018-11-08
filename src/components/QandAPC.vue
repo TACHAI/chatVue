@@ -165,6 +165,7 @@ export default {
         that.questionList.push({question:that.word})
         that.$refs.chatContent.scrollTop = 99999
         that.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
+        // that.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
           'word':val,
           'sessionId':global_.sessionId
         },{emulateJSON:true})
@@ -332,6 +333,7 @@ export default {
       this.word=this.input
       this.input = ''
       this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
+      // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
         'word':this.word,
         'sessionId':global_.sessionId
       },{emulateJSON:true})
@@ -542,6 +544,7 @@ export default {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
+  font-size: 10px;
   margin-left: 70px;/*no*/
   margin-right: 76px;/*no*/
   position: relative;
@@ -561,11 +564,11 @@ export default {
 }
 
 .answer-content dl{
-  font-size: 10px;
+  font-size: 15px;
 }
 .answer-content h1 {
   color: #252526;
-  font-size: 20px;/*no*/
+  font-size: 15px;/*no*/
 }
 
 .answer-content h1 span {
@@ -574,13 +577,13 @@ export default {
 
 .answer-content h2 {
   color: #252526;
-  font-size: 18px;/*no*/
+  font-size: 15px;/*no*/
   margin-top: 21px;
 }
 
 .answer-content li {
   margin: 8px 0;/*no*/
-  font-size: 18px;/*no*/
+  font-size: 15px;/*no*/
   line-height: 20px;/*no*/
   color: #252526;
 }
