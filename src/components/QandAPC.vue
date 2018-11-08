@@ -164,8 +164,8 @@ export default {
         console.log(val)
         that.questionList.push({question:that.word})
         that.$refs.chatContent.scrollTop = 99999
-        that.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
-        // that.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
+        // that.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
+        that.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
           'word':val,
           'sessionId':global_.sessionId
         },{emulateJSON:true})
@@ -332,8 +332,8 @@ export default {
 
       this.word=this.input
       this.input = ''
-      this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
-      // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
+      // this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
+      this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
         'word':this.word,
         'sessionId':global_.sessionId
       },{emulateJSON:true})
