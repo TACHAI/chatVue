@@ -99,7 +99,7 @@
     <div class="input-box" @click="onClickInput" ref="inputBox">
       <!--<input @click="sendQuestion" type="text" placeholder="简单输入，我来为你解答…" v-model="input" ref="input" >-->
       <form @submit="sendQuestion" id="fromSend">
-        <input from="fromSend" placeholder="简单输入，我来为你解答…" v-model="input" cols="50" rows="4" ref="input" maxlength="89" @click="questionFocus" @keyup="textareaKeyup"></input>
+        <textarea from="fromSend" placeholder="简单输入，我来为你解答…" v-model="input" wrap="soft"  rows="1" ref="textarea"  @click="questionFocus" @keyup="textareaKeyup"></textarea>
         <!-- <input type="text" placeholder="简单输入，我来为你解答…" v-model="input" ref="input" maxlength="89" @focus="questionFocus"> -->
       </form>
       <!--发送文字-->
@@ -178,7 +178,7 @@
     // 页面刷新有一个缓存在存在以前的值
     created(){
         this.questionList = JSON.parse(sessionStorage.getItem('qusetList') || '[]');
-        //this.questionFocus();
+        this.questionFocus();
     },
     computed: {
       count() {
@@ -321,9 +321,9 @@
 
       onClickInput() {
         this.questionFocus();
-        // setTimeout(() => {
-        //   this.$refs.inputBox.scrollIntoViewIfNeeded()
-        // }, 300)
+        setTimeout(() => {
+          this.$refs.inputBox.scrollIntoViewIfNeeded()
+        }, 300)
       },
 
       onLike(index) {
@@ -413,7 +413,9 @@
         if (this.input.length === 0) {
           return false
         };
-        this.word = this.input;
+        var res = this.input;
+        res=res.replace(/\\n/g,'')
+        this.word = res;
         this.input = '';
         this.commonSend();
       },
@@ -807,18 +809,19 @@
   .input-box form{
     display:block;
     flex: 1;
-    font-size: 14px;
+    font-size: 15px;
     /*no*/
     border: none;
     outline: none;
   }
   .input-box textarea {
-    height: 39px;
+    height: 100%;
+    /*height: 31px;*/
     width: 99%;
     resize: none;
     outline: none;
     background: #fff;
-    border: solid 1px #fff;
+    border: solid 2px #fff;
   }
 
   .input-box input {
