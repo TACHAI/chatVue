@@ -2,8 +2,8 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import PCApp from './PCApp'
 import App from './App'
+import PCApp from './PCApp'
 import router from './router'
 import device from 'current-device'
 

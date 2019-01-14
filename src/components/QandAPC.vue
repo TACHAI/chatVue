@@ -92,9 +92,9 @@
         ref="input"
         @keyup.enter="sendQuestion">
       <div class="send" @click="sendQuestion"></div>
-      <div class="addPicturePc">
-        <input type="file" accept="image/*" @change="uploadPic"/>
-      </div>
+      <!--<div class="addPicturePc">-->
+        <!--<input type="file" accept="image/*" @change="uploadPic"/>-->
+      <!--</div>-->
       <!--<span class="count">{{ count }}</span>-->
     </div>
     <div class="advice" v-show="showAdvice">
@@ -650,9 +650,11 @@ export default {
   line-height: 39px;/*no*/
 }
 
+
 .input-box input::-webkit-input-placeholder {
   color: #D2D2D6;
 }
+
 
 .addPicturePc {
   width: 39px;/*no*/
@@ -703,5 +705,4 @@ export default {
   transform: translateY(50%);
   right: 74px;
 }
-
 </style>

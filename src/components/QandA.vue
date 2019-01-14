@@ -1,5 +1,5 @@
 <template>
-  <div class="container" ref="container">
+  <div class="container" >
     <div class="header">
       <span class="tab ai" :class="{
                 'selected': selectedTab === 0
@@ -40,27 +40,27 @@
         </div>
       </div>
       <!-- 热门问答 -->
-      <div>
-        <div class="answer">
-          <div class="avatar"></div>
-          <div class="answer-content content-width">
-            <div class="hotAnswerHeader">
-              <p>热门问答<img src="../assets/fire.png" alt=""></p>
-              <p class="color-blue" @click="anthorBatch">换一批<img class="batchImage" src="../assets/batch.png" alt=""></p>
-            </div>
-            <div class="hotSwiper">
-              <swiper :options="swaperOptions" ref="mySwiper" v-if="greetings.hotAnswer.length > 0">
-                <swiperSlide v-for="(value,index) in greetings.hotAnswer" :key="index">
-                  <div class="slider-innfor">
-                    <p v-bind:data-title="value.question">{{ value.question }}</p>
-                    <p v-bind:data-title="value.question">{{ value.answer }}</p>
-                  </div>
-                </swiperSlide>
-              </swiper>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!--<div>-->
+        <!--<div class="answer">-->
+          <!--<div class="avatar"></div>-->
+          <!--<div class="answer-content content-width">-->
+            <!--<div class="hotAnswerHeader">-->
+              <!--<p>热门问答<img src="../assets/fire.png" alt=""></p>-->
+              <!--<p class="color-blue" @click="anthorBatch">换一批<img class="batchImage" src="../assets/batch.png" alt=""></p>-->
+            <!--</div>-->
+            <!--<div class="hotSwiper">-->
+              <!--<swiper :options="swaperOptions" ref="mySwiper" v-if="greetings.hotAnswer.length > 0">-->
+                <!--<swiperSlide v-for="(value,index) in greetings.hotAnswer" :key="index">-->
+                  <!--<div class="slider-innfor">-->
+                    <!--<p v-bind:data-title="value.question">{{ value.question }}</p>-->
+                    <!--<p v-bind:data-title="value.question">{{ value.answer }}</p>-->
+                  <!--</div>-->
+                <!--</swiperSlide>-->
+              <!--</swiper>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
       <div class="q-a" v-for="(item, index) in questionList" :key="index">
         <!--<div class="time">-->
         <!--<span>4:30PM</span>-->
@@ -97,15 +97,17 @@
     </div>
 
     <div class="input-box" @click="onClickInput" ref="inputBox">
-      <form @submit="sendQuestion">
-        <input type="text" placeholder="简单输入，我来为你解答…" v-model="input" ref="input" maxlength="89" @focus="questionFocus">
+      <!--<input @click="sendQuestion" type="text" placeholder="简单输入，我来为你解答…" v-model="input" ref="input" >-->
+      <form @submit="sendQuestion" id="fromSend">
+        <input from="fromSend" placeholder="简单输入，我来为你解答…" v-model="input" cols="50" rows="4" ref="input" maxlength="89" @click="questionFocus" @keyup="textareaKeyup"></input>
+        <!-- <input type="text" placeholder="简单输入，我来为你解答…" v-model="input" ref="input" maxlength="89" @focus="questionFocus"> -->
       </form>
       <!--发送文字-->
-      <div class="send" @click="sendQuestion"></div>
+      <button class="send" @click="sendQuestion"></button>
       <!--上传图片-->
-      <div class="addPicture">
-        <input type="file" name="image" accept="image/*" multiple style="" @change="uploadPic">
-      </div>
+      <!--<div class="addPicture">-->
+        <!--<input type="file" name="image" accept="image/*" multiple style="" @change="uploadPic">-->
+      <!--</div>-->
       <!--<span class="count">{{ count }}</span>-->
     </div>
 
@@ -176,7 +178,7 @@
     // 页面刷新有一个缓存在存在以前的值
     created(){
         this.questionList = JSON.parse(sessionStorage.getItem('qusetList') || '[]');
-        this.questionFocus();
+        //this.questionFocus();
     },
     computed: {
       count() {
@@ -197,7 +199,7 @@
         this.questionList.push({
           question: this.word
         })
-        this.$refs.chatContent.scrollTop = 99999
+        // this.$refs.chatContent.scrollTop = 99999
         this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine//webWord.do', {
         // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
           'word': this.word,
@@ -253,16 +255,16 @@
           })
       }
 
-      if (/Android/gi.test(navigator.userAgent)) {
-        window.addEventListener('resize', function() {
-          if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-            window.setTimeout(function() {
-              document.activeElement.scrollIntoViewIfNeeded()
-              document.activeElement.scrollIntoView()
-            }, 0)
-          }
-        })
-      }
+      // if (/Android/gi.test(navigator.userAgent)) {
+      //   window.addEventListener('resize', function() {
+      //     if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+      //       window.setTimeout(function() {
+      //         document.activeElement.scrollIntoViewIfNeeded()
+      //         document.activeElement.scrollIntoView()
+      //       }, 0)
+      //     }
+      //   })
+      // }
     },
     methods: {
       // 换一批
@@ -307,9 +309,13 @@
         this.$refs.input.value = e.target.value
         this.count = 89 - this.input.length
       },
-
-      sendQuestion(e) {
-        e.preventDefault();
+      textareaKeyup(e){
+        if(e.keyCode == 13){
+          this.sendQuestion(e)
+        }
+      },
+      sendQuestion() {
+        //e.preventDefault();
         this.getList()
       },
 
@@ -415,7 +421,9 @@
         this.questionList.push({
           question: this.word
         })
-        this.$refs.chatContent.scrollTop = 99999
+        setTimeout(() => {
+          this.$refs.chatContent.scrollTop = 99999
+        }, 50)
         this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine//webWord.do', {
         // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
           'word': this.word,
@@ -486,6 +494,11 @@
 </script>
 
 <style scoped>
+  /*.container {*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+    /*position: relative;*/
+  /*}*/
   .header {
     height: 52px;
     /*no*/
@@ -729,28 +742,40 @@
     right: 12px;
     z-index: 99999;
     /*height: 58px;*/
-    border-radius: 99px;
-    background-color: #fff;
+    border-radius: 5px;
+    background-color: #f5f5f5;
     border: 1px solid #D6D6D6;
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.10);
-    padding: 9px 19px;
+    padding: 5px;
     display: flex;
+    justify-content: space-around;
     align-items: center;
   }
 
-  .input-box form,.input-box input {
-    flex: 1;
-    padding-right: 10px;
-    font-size: 14px;
-    /*no*/
-    border: none;
-    outline: none;
-  }
+  /*.input-box form,.input-box input {*/
+    /*flex: 1;*/
+    /*padding-right: 10px;*/
+    /*font-size: 14px;*/
+    /*!*no*!*/
+    /*border: none;*/
+    /*outline: none;*/
+  /*}*/
 
-  .input-box input::-webkit-input-placeholder {
-    color: #D2D2D6;
-  }
+  /*.input-box textarea {*/
+    /*flex: 1;*/
+    /*padding-right: 10px;*/
+    /*font-size: 14px;*/
+    /*!*no*!*/
+    /*border: none;*/
+    /*outline: none;*/
+  /*}*/
 
+  /*.input-box input::-webkit-input-placeholder {*/
+    /*color: #D2D2D6;*/
+  /*}*/
+  /*.input-box textarea::-webkit-input-placeholder {*/
+    /*color: #D2D2D6;*/
+  /*}*/
   .addPicture {
     width: 39px;
     height: 39px;
@@ -779,6 +804,35 @@
     background-repeat: no-repeat;
     background-position: center;
   }
+  .input-box form{
+    display:block;
+    flex: 1;
+    font-size: 14px;
+    /*no*/
+    border: none;
+    outline: none;
+  }
+  .input-box textarea {
+    height: 39px;
+    width: 99%;
+    resize: none;
+    outline: none;
+    background: #fff;
+    border: solid 1px #fff;
+  }
+
+  .input-box input {
+    height: 39px;
+    width: 99%;
+    resize: none;
+    outline: none;
+    background: #fff;
+    border: solid 1px #fff;
+  }
+  .input-box input::-webkit-input-placeholder {
+    color: #D2D2D6;
+  }
+
 
   .count {
     display: inline-block;
@@ -836,4 +890,5 @@
   .hotAnswerHeader img.batchImage{
     height:12px;
   }
+
 </style>

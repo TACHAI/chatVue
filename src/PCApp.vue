@@ -46,7 +46,7 @@ html, body {
 }
 
 body {
-  background-color: #898E99;
+  /*background-color: #898E99;*/
   padding-top: 30px;/*no*/
   box-sizing: border-box;
 }
