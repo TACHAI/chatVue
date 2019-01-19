@@ -40,10 +40,10 @@
 
             <!--<h1>您的问题是：<span>{{item.question}}</span></h1>-->
             <!--<h2>我们为您找到以下答案</h2>-->
-            <!-- <dl v-html="item.answer">
+            <dl v-html="item.answer">
               {{ item.answer }}
-            </dl> -->
-            <contral-shink :answer="item.answer"></contral-shink>
+            </dl>
+            <!--<contral-shink :answer="item.answer"></contral-shink>-->
             <!--暂时不用-->
             <!--<ul>-->
               <!--<li>-->
@@ -110,6 +110,7 @@ import AdviceBox from './AdviceBox'
 import Feedback from './Feedback'
 import global_ from '../common/Global'
 import contralShink from './contralShink'
+import Vue from 'vue'
 export default {
 
   data () {
@@ -141,6 +142,7 @@ export default {
     Feedback,
     contralShink
   },
+  inject: ['reload'],
   // watch:{
   //   query(){
   //
@@ -149,7 +151,6 @@ export default {
   mounted() {
     this.getEventDatas()
     window.setShi = (word)=>{
-      console.log('查看是否替换'+word)
       eventBus.$emit('hotTopic',word)
     }
   },
@@ -161,9 +162,10 @@ export default {
       const that = this
       eventBus.$on('hotTopic',function (val) {
         that.word = val
-        console.log(val)
         that.questionList.push({question:that.word})
-        that.$refs.chatContent.scrollTop = 99999
+        setTimeout(() => {
+          that.$refs.chatContent.scrollTop = 99999
+        }, 50)
         that.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
         // that.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
           'word':val,
@@ -172,14 +174,12 @@ export default {
           .then((res) => {
             //  把返回值给到
             var result=res.data.data
-            console.log(res.data.data)
             // var reg = /[a-zA-z]+:\/\/[^\s]*/g;
             var reg = /[a-zA-z]+:\/\/[^\s]*.pdf/g;
             var reg1 = /[a-zA-z]+:\/\/[^\s]*/g;
             var url;
             //替换pdf预览
             while ((url = reg.exec(result))!=null) {
-              console.log("222"+url)
               result = result
                 .replace(url,
                   "<a href='"+url+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
@@ -189,29 +189,34 @@ export default {
             var url2
             while((url2 = reg1.exec(result))!=null) {
               if(reg3.exec(url2)!=null){
-                console.log("223"+url2)
               }else {
-                console.log("123"+url2)
                 result = result
                   .replace(url2,
                     "<a href='"+url2+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
               }
             }
             result = result.replace(/\\r\\n/g, "<br/>");
-            console.log(result.replace(/\\r\\n/g, "<br/>"))
             result = result.replace(/\\n/g, "<br/>");
             result = result.replace(/void0/g,';')
             result = result.replace(/\\\"\s/g, '"')
             result = result.replace(/\\\"/g, '"')
 //          this.responseResoult = result
+
+            // todo去除以前的发送
+            for( var i in that.questionList){
+              if(that.questionList[i].answer){
+                var an=that.questionList[i].answer.toString().replace(/setShi/g,"set")
+                Vue.set(that.questionList,i,
+                  {'answer':an}
+                )
+              }
+            }
             let data = {
               answer: result,
               msgid: res.data.msg
             }
             that.questionList.push(data)
             that.word=''
-            // this.responseResoult = ''
-            // that.$refs.chatContent.scrollTop = 99999
             setTimeout(() => {
               that.$refs.chatContent.scrollTop = 99999
             }, 50)
@@ -225,10 +230,8 @@ export default {
       this.count = 89 - this.input.length
     },
     onLike(index) {
-      console.log(index)
       this.feedBackList.push(index)
       var obj = this.questionList[index]
-      console.log('onLike msgid++++++++++++++' + obj.msgid)
       // var data = {"msgid":obj.msgid,"csr":0,"suggestion":""}
       // var str = JSON.stringify(data,null,4)
       this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/csr.do',
@@ -240,11 +243,10 @@ export default {
     },
 
     onDislike(index) {
-      console.log(index)
       this.dislikeIndex = index
       this.showAdvice = true
       var obj = this.questionList[index]
-      console.log('onDisLike msgid++++++++++++++' + obj.msgid)
+      // console.log('onDisLike msgid++++++++++++++' + obj.msgid)
       // var data = {"msgid":obj.msgid,"csr":1,"suggestion":''}
       // var str = JSON.stringify(data)
       //传值给 弹框组件
@@ -564,11 +566,11 @@ export default {
 }
 
 .answer-content dl{
-  font-size: 15px;
+  font-size: 11px;
 }
 .answer-content h1 {
   color: #252526;
-  font-size: 15px;/*no*/
+  font-size: 13px;/*no*/
 }
 
 .answer-content h1 span {
@@ -577,13 +579,13 @@ export default {
 
 .answer-content h2 {
   color: #252526;
-  font-size: 15px;/*no*/
+  font-size: 13px;/*no*/
   margin-top: 21px;
 }
 
 .answer-content li {
   margin: 8px 0;/*no*/
-  font-size: 15px;/*no*/
+  font-size: 13px;/*no*/
   line-height: 20px;/*no*/
   color: #252526;
 }
@@ -650,11 +652,9 @@ export default {
   line-height: 39px;/*no*/
 }
 
-
 .input-box input::-webkit-input-placeholder {
   color: #D2D2D6;
 }
-
 
 .addPicturePc {
   width: 39px;/*no*/

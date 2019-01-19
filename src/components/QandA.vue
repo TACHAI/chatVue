@@ -77,7 +77,10 @@
             <div class="avatar"></div>
             <div class="answer-content">
               <div class="triangle"></div>
-              <contral-shink :answer="item.answer"></contral-shink>
+              <dl v-html="item.answer">
+                {{ item.answer }}
+              </dl>
+              <!--<contral-shink :answer="item.answer"></contral-shink>-->
             </div>
           </div>
           <!-- <div class="feedback">
@@ -97,10 +100,12 @@
     </div>
 
     <div class="input-box" @click="onClickInput" ref="inputBox">
-      <!--<input @click="sendQuestion" type="text" placeholder="简单输入，我来为你解答…" v-model="input" ref="input" >-->
+      <!--<input @click="sendQuestion" type="text" placeholder="简单输入，我来为你解答…" v-model="cinput" ref="input" >-->
       <form @submit="sendQuestion" id="fromSend">
-        <textarea from="fromSend" placeholder="简单输入，我来为你解答…" v-model="input" wrap="soft"  rows="1" ref="textarea"  @click="questionFocus" @keyup="textareaKeyup"></textarea>
-        <!-- <input type="text" placeholder="简单输入，我来为你解答…" v-model="input" ref="input" maxlength="89" @focus="questionFocus"> -->
+        <!--<auto-textarea from="fromSend" placeholder="简单输入，我来为你解答…" lineHeight="30px"  border="false" fontSize="18px" ref="autoTextarea"  @click="questionFocus" @keyup="textareaKeyup"/>-->
+        <textarea from="fromSend" placeholder="简单输入，我来为你解答…" v-model="input" contenteditable="true" wrap="soft"  :rows="rows" ref="textarea" @input="changeVal"  @click="questionFocus" @keyup="textareaKeyup"></textarea>
+        <!--<div  contenteditable="true"  type="text"   @input="changeVal"  ref="input" maxlength="89" @focus="questionFocus"></div>-->
+         <!--<input  contenteditable="true" type="text" placeholder="简单输入，我来为你解答…" v-model="input" ref="input" maxlength="89" @focus="questionFocus">-->
       </form>
       <!--发送文字-->
       <button class="send" @click="sendQuestion"></button>
@@ -124,6 +129,8 @@
   import 'swiper/dist/css/swiper.css'
   import contralShink from './contralShink'
   import eventBus from '../common/eventBus.js'
+  import autoTextarea from 'auto-textarea'
+  import Vue from 'vue'
 
   import {
     swiper,
@@ -133,6 +140,7 @@
     data() {
       return {
         input: '',
+        rows: 2,
         selectedTab: 0,
         gretterIndex: 'getter',
         greetings: {
@@ -186,11 +194,13 @@
       }
     },
     components: {
+      // autoTextarea,
       AdviceMobile,
       FeedbackMobile,
       swiper,
       swiperSlide,
-      contralShink
+      contralShink,
+      autoTextarea
     },
     mounted() {
       window.setShi = (word) => {
@@ -199,6 +209,7 @@
         this.questionList.push({
           question: this.word
         })
+
         // this.$refs.chatContent.scrollTop = 99999
         this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine//webWord.do', {
         // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
@@ -241,6 +252,15 @@
             result = result.replace(/void0/g, ';')
             result = result.replace(/\\"\s/g, '"')
             result = result.replace(/\\"/g, '"')
+            // todo去除以前的发送
+            for( var i in this.questionList){
+              if(this.questionList[i].answer){
+                var an=this.questionList[i].answer.toString().replace(/setShi/g,"set")
+                Vue.set(this.questionList,i,
+                  {'answer':an}
+                )
+              }
+            }
             let data = {
               answer: result,
               msgid: res.data.msg
@@ -267,6 +287,29 @@
       // }
     },
     methods: {
+
+      getFocus (val) {
+        console.log(123456);
+        if (!this.inputText) {
+          val.target.innerText = '';
+          // this.placeholderText = '';
+        }
+      },
+      getBlur (val) {
+        console.log(11111);
+        if (val.target.innerText == '') {
+          val.target.innerText = '请输入文字';
+          // this.placeholderText = '请输入文字';
+        }
+      },
+      changeVal (val) {
+        if(this.input.length>40){
+          this.rows=4;
+        }else {
+          this.rows=2;
+        };
+        // console.log('this.inputText==>', this.inputText)
+      },
       // 换一批
       anthorBatch() {
         this.greetings.hotAnswer = [];
@@ -799,12 +842,15 @@
   .send {
     width: 39px;
     height: 39px;
-    border-radius: 99px;
+    border-radius: 100px;
     background-color: #41BF76;
     background-image: url('../assets/ss.png');
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
+    border: solid 2px #f5f5f5!important;
+    border: none;
+    outline: none;
   }
   .input-box form{
     display:block;
@@ -824,6 +870,14 @@
     border: solid 2px #fff;
   }
 
+  .input-box div {
+    height: 100%;
+    width: 99%;
+    resize: none;
+    outline: none;
+    background: #fff;
+    border: solid 2px #fff;
+  }
   .input-box input {
     height: 39px;
     width: 99%;
