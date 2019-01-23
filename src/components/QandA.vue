@@ -253,11 +253,12 @@
             result = result.replace(/\\"\s/g, '"')
             result = result.replace(/\\"/g, '"')
             // todo去除以前的发送
-            for( var i in this.questionList){
-              if(this.questionList[i].answer){
-                var an=this.questionList[i].answer.toString().replace(/setShi/g,"set")
-                Vue.set(this.questionList,i,
-                  {'answer':an}
+            for( var i in this.questionList) {
+              if(this.questionList[i].answer) {
+                var an = this.questionList[i].answer.toString().replace(/<a.*?>/g, '')
+                an = an.replace(/<\/a>/g, '')
+                Vue.set(this.questionList, i,
+                  {'answer': an }
                 )
               }
             }

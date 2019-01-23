@@ -205,7 +205,8 @@ export default {
             // todo去除以前的发送
             for( var i in that.questionList){
               if(that.questionList[i].answer){
-                var an=that.questionList[i].answer.toString().replace(/setShi/g,"set")
+                var an=that.questionList[i].answer.toString().replace(/<a.*?>/g,"")
+                an = an.replace(/<\/a>/g,"")
                 Vue.set(that.questionList,i,
                   {'answer':an}
                 )
