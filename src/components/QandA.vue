@@ -1,20 +1,20 @@
 <template>
   <div class="container" >
-    <div class="header">
-      <span class="tab ai" :class="{
-                'selected': selectedTab === 0
-              }" @click="selectedTab = 0">
-              徐汇区行政服务中心智能咨询客服
-            </span>
-      <!--<span-->
-      <!--class="tab"-->
-      <!--:class="{-->
-      <!--'selected': selectedTab === 1-->
-      <!--}"-->
-      <!--@click="selectedTab = 1">-->
-      <!--人工客服-->
-      <!--</span>-->
-    </div>
+    <!--<div class="header">-->
+      <!--&lt;!&ndash;<span class="tab ai" :class="{&ndash;&gt;-->
+                <!--&lt;!&ndash;'selected': selectedTab === 0&ndash;&gt;-->
+              <!--&lt;!&ndash;}" @click="selectedTab = 0">&ndash;&gt;-->
+              <!--&lt;!&ndash;徐汇区行政服务中心智能咨询客服&ndash;&gt;-->
+            <!--&lt;!&ndash;</span>&ndash;&gt;-->
+      <!--&lt;!&ndash;<span&ndash;&gt;-->
+      <!--&lt;!&ndash;class="tab"&ndash;&gt;-->
+      <!--&lt;!&ndash;:class="{&ndash;&gt;-->
+      <!--&lt;!&ndash;'selected': selectedTab === 1&ndash;&gt;-->
+      <!--&lt;!&ndash;}"&ndash;&gt;-->
+      <!--&lt;!&ndash;@click="selectedTab = 1">&ndash;&gt;-->
+      <!--&lt;!&ndash;人工客服&ndash;&gt;-->
+      <!--&lt;!&ndash;</span>&ndash;&gt;-->
+    <!--</div>-->
 
     <div class="chat-content" ref="chatContent">
       <div>
@@ -79,6 +79,8 @@
               <div class="triangle"></div>
               <dl v-html="item.answer">
                 {{ item.answer }}
+                <!--移动端放大图片-->
+                <big-img v-if="showImg" @clickit="viewImg" :img-src="imgSrc"></big-img>
               </dl>
               <!--<contral-shink :answer="item.answer"></contral-shink>-->
             </div>
@@ -136,11 +138,19 @@
     swiper,
     swiperSlide
   } from 'vue-awesome-swiper'
+  import BigImg from '../common/BigImg.vue'
   export default {
     data() {
       return {
         input: '',
         rows: 2,
+        showImg:false,
+        imgSrc:'',
+        imgPre:'',
+        msgid:'',
+        imgArr:[],
+        imgPreArr:[],
+        result:'',
         selectedTab: 0,
         gretterIndex: 'getter',
         greetings: {
@@ -194,6 +204,7 @@
       }
     },
     components: {
+      'big-img': BigImg,
       // autoTextarea,
       AdviceMobile,
       FeedbackMobile,
@@ -274,18 +285,17 @@
               this.$refs.chatContent.scrollTop = 99999
             }, 50)
           })
-      }
+      };
 
-      // if (/Android/gi.test(navigator.userAgent)) {
-      //   window.addEventListener('resize', function() {
-      //     if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-      //       window.setTimeout(function() {
-      //         document.activeElement.scrollIntoViewIfNeeded()
-      //         document.activeElement.scrollIntoView()
-      //       }, 0)
-      //     }
-      //   })
-      // }
+      // 点击图片变大
+      window.clickImg = (e) => {
+        this.showImg = true
+        //  获取当前图片地址
+        this.imgSrc = e.getAttribute("src")
+      }
+      window.viewImg =() =>{
+        this.showImg = false
+      }
     },
     methods: {
 
@@ -470,8 +480,9 @@
         setTimeout(() => {
           this.$refs.chatContent.scrollTop = 99999
         }, 50)
-        this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine//webWord.do', {
-        // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
+        // this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine//webWord.do', {
+        this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
+        // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/moxing.do',{
           'word': this.word,
             'sessionId': global_.sessionId
           }, {
@@ -511,11 +522,70 @@
             result = result.replace(/void0/g, ';')
             result = result.replace(/\\"\s/g, '"')
             result = result.replace(/\\"/g, '"')
-            let data = {
-              answer: result,
-              msgid: res.data.msg
+            // let data = {
+            //   answer: result,
+            //   msgid: res.data.msg
+            // }
+
+
+
+            // 图片
+            var  imgreg= /##\d+##/g;
+            var img
+            while((img = imgreg.exec(result))!=null ){
+              this.imgPreArr.push(img)
+              img = img.toString().replace(/##/g,"");
+              this.imgArr.push(img)
             }
-            this.questionList.push(data);
+            // 答案分段
+            if(result.split('$$$').length>1){
+              for(var i =0;i<result.split('$$').length;i++){
+                let datai = {
+                  answer:result.split('$$')[i],
+                  msgid:res.data.msg
+                }
+                this.questionList.push(datai)
+              }
+            }else if(this.imgArr.length>0){
+              for (var i=0;i<this.imgArr.length;i++){
+                // console.log("img"+this.imgPre)
+                this.imgPre=this.imgPreArr[i];
+                this.result =result;
+                this.msgid = res.data.msg
+                this.$http.post('http://40.73.102.21/wxpicture/pictureImgId.do',{
+                  'imgId':this.imgArr[i]
+                },{emulateJSON:true})
+                  .then((res) => {
+                    data=res.data.data.base64Picture
+                    console.log("imgPre"+this.imgPre)
+
+                    img ="<img src='data:image/png;base64,"+data+"' onclick='clickImg(this)' width='200px' height='200px'></img>";
+                    // this.result=this.result.replace(this.imgPre,"<img src='data:image/png;base64,"+data+"' onclick='clickImg(this)'></img>");
+                    console.log("result"+this.result)
+                    let data = {
+                      answer: img,
+                      msgid: this.msgid
+                    }
+                    this.questionList.push(data)
+
+                    setTimeout(() => {
+                      this.$refs.chatContent.scrollTop = 99999
+                    }, 50)
+
+                  })
+              }
+              this.imgArr=[];
+              this.imgPreArr=[];
+            } else {
+              let data = {
+                answer: result,
+                msgid: res.data.msg
+              }
+              this.questionList.push(data)
+
+            }
+
+            // this.questionList.push(data);
             this.momory();
             this.word = ''
             // this.input = ''
@@ -711,6 +781,10 @@
     border-right: 20px solid transparent;
     border-bottom: 20px solid transparent;
   }
+
+  /*.answer-content dl{*/
+    /*line-height: 18px;*/
+  /*}*/
 
   .answer-content h1 {
     color: #252526;
