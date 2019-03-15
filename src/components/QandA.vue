@@ -107,17 +107,16 @@
         <!--<auto-textarea from="fromSend" placeholder="简单输入，我来为你解答…" lineHeight="30px"  border="false" fontSize="18px" ref="autoTextarea"  @click="questionFocus" @keyup="textareaKeyup"/>-->
         <textarea from="fromSend" placeholder="简单输入，我来为你解答…" v-model="input" contenteditable="true" wrap="soft"  :rows="rows" ref="textarea" @input="changeVal"  @click="questionFocus" @keyup="textareaKeyup"></textarea>
         <!--<div  contenteditable="true"  type="text"   @input="changeVal"  ref="input" maxlength="89" @focus="questionFocus"></div>-->
-         <!--<input  contenteditable="true" type="text" placeholder="简单输入，我来为你解答…" v-model="input" ref="input" maxlength="89" @focus="questionFocus">-->
+        <!--<input  contenteditable="true" type="text" placeholder="简单输入，我来为你解答…" v-model="input" ref="input" maxlength="89" @focus="questionFocus">-->
       </form>
       <!--发送文字-->
       <button class="send" @click="sendQuestion"></button>
       <!--上传图片-->
       <!--<div class="addPicture">-->
-        <!--<input type="file" name="image" accept="image/*" multiple style="" @change="uploadPic">-->
+      <!--<input type="file" name="image" accept="image/*" multiple style="" @change="uploadPic">-->
       <!--</div>-->
       <!--<span class="count">{{ count }}</span>-->
     </div>
-
     <div class="advice" v-show="showAdvice">
       <advice-mobile @on-submit="onSubmit" @on-close="onClose" />
     </div>
@@ -481,8 +480,11 @@
           this.$refs.chatContent.scrollTop = 99999
         }, 50)
         // this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine//webWord.do', {
-        this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
-        // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/moxing.do',{
+        // 现在test改成了develop
+        this.$http.post('http://40.73.102.21/wechatroutine/test.do',{
+          // 现在moxing改成了text
+          // this.$http.post('http://40.73.102.21/wechatroutine/moxing.do',{
+          // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/moxing.do',{
           'word': this.word,
             'sessionId': global_.sessionId
           }, {
@@ -529,54 +531,21 @@
 
 
 
-            // 图片
-            var  imgreg= /##\d+##/g;
-            var img
-            while((img = imgreg.exec(result))!=null ){
-              this.imgPreArr.push(img)
-              img = img.toString().replace(/##/g,"");
-              this.imgArr.push(img)
-            }
             // 答案分段
-            if(result.split('$$$').length>1){
-              for(var i =0;i<result.split('$$').length;i++){
-                let datai = {
-                  answer:result.split('$$')[i],
-                  msgid:res.data.msg
+            if(result.split('##').length>1) {
+              for (var i = 0; i < result.split('##').length; i++) {
+                if (result.split('##')[i].length > 0) {
+                  let datai = {
+                    answer: result.split('##')[i],
+                    msgid: res.data.msg
+                  }
+                  this.questionList.push(datai)
+                  setTimeout(() => {
+                    this.$refs.chatContent.scrollTop = 99999
+                  }, 50)
                 }
-                this.questionList.push(datai)
               }
-            }else if(this.imgArr.length>0){
-              for (var i=0;i<this.imgArr.length;i++){
-                // console.log("img"+this.imgPre)
-                this.imgPre=this.imgPreArr[i];
-                this.result =result;
-                this.msgid = res.data.msg
-                this.$http.post('http://40.73.102.21/wxpicture/pictureImgId.do',{
-                  'imgId':this.imgArr[i]
-                },{emulateJSON:true})
-                  .then((res) => {
-                    data=res.data.data.base64Picture
-                    console.log("imgPre"+this.imgPre)
-
-                    img ="<img src='data:image/png;base64,"+data+"' onclick='clickImg(this)' width='200px' height='200px'></img>";
-                    // this.result=this.result.replace(this.imgPre,"<img src='data:image/png;base64,"+data+"' onclick='clickImg(this)'></img>");
-                    console.log("result"+this.result)
-                    let data = {
-                      answer: img,
-                      msgid: this.msgid
-                    }
-                    this.questionList.push(data)
-
-                    setTimeout(() => {
-                      this.$refs.chatContent.scrollTop = 99999
-                    }, 50)
-
-                  })
-              }
-              this.imgArr=[];
-              this.imgPreArr=[];
-            } else {
+            } else if(result.length>0){
               let data = {
                 answer: result,
                 msgid: res.data.msg
@@ -585,7 +554,7 @@
 
             }
 
-            // this.questionList.push(data);
+              // this.questionList.push(data);
             this.momory();
             this.word = ''
             // this.input = ''

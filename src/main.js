@@ -6,8 +6,11 @@ import App from './App'
 import PCApp from './PCApp'
 import router from './router'
 import device from 'current-device'
+import preview from 'vue-photo-preview'
+import 'vue-photo-preview/dist/skin.css'
 
 Vue.use(VueResource)
+Vue.use(preview)
 Vue.config.productionTip = false
 window.eventBus = new Vue()
 

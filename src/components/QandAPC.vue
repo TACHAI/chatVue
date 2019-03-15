@@ -195,9 +195,11 @@ export default {
         setTimeout(() => {
           that.$refs.chatContent.scrollTop = 99999
         }, 50)
-        // that.$http.post('https://can.xmduruo.com:4000/wechatroutine/moxing.do',{
+        // 现在moxing改成了test
+        // that.$http.post('http://40.73.102.21/wechatroutine/moxing.do',{
         //   that.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
-        that.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
+        // 现在test改成了develop
+        that.$http.post('http://40.73.102.21/wechatroutine/test.do',{
           'word':val,
           'sessionId':global_.sessionId
         },{emulateJSON:true})
@@ -242,58 +244,21 @@ export default {
                 )
               }
             }
-
-            // 图片
-            var  imgreg= /##\d+##/g;
-            var img
-            while((img = imgreg.exec(result))!=null ){
-              that.imgPreArr.push(img)
-              img = img.toString().replace(/##/g,"");
-              that.imgArr.push(img)
-            }
-
             // 多段对话
-            if(result.split('$$').length>1){
-
-              for(var i =0;i<result.split('$$').length;i++){
-                let datai = {
-                  answer:result.split('$$')[i],
-                  msgid:res.data.msg
+            if(result.split('##').length>1) {
+              for (var i = 0; i < result.split('##').length; i++) {
+                if (result.split('##')[i].length > 0) {
+                  let datai = {
+                    answer: result.split('##')[i],
+                    msgid: res.data.msg
+                  }
+                  that.questionList.push(datai)
+                  setTimeout(() => {
+                    that.$refs.chatContent.scrollTop = 99999
+                  }, 50)
                 }
-                that.questionList.push(datai)
               }
-
-            }else if(that.imgArr.length>0){
-              for (var i=0;i<that.imgArr.length;i++){
-                // console.log("img"+this.imgPre)
-                that.imgPre=that.imgPreArr[i];
-                that.result =result;
-                that.msgid = res.data.msg
-                that.$http.post('http://40.73.102.21/wxpicture/pictureImgId.do',{
-                  'imgId':that.imgArr[i]
-                },{emulateJSON:true})
-                  .then((res) => {
-                    data=res.data.data.base64Picture
-                    console.log("imgPre"+that.imgPre)
-
-                    img ="<img src='data:image/png;base64,"+data+"' onclick='clickImg(this)' width='200px' height='200px'></img>";
-                    // this.result=this.result.replace(this.imgPre,"<img src='data:image/png;base64,"+data+"' onclick='clickImg(this)'></img>");
-                    console.log("result"+that.result)
-                    let data = {
-                      answer: img,
-                      msgid: that.msgid
-                    }
-                    that.questionList.push(data)
-
-                    setTimeout(() => {
-                      that.$refs.chatContent.scrollTop = 99999
-                    }, 50)
-
-                  })
-              }
-              that.imgArr=[];
-              that.imgPreArr=[];
-            } else {
+            }else if(result.length>0){
               let data2 = {
                 answer: result,
                 msgid: res.data.msg
@@ -301,6 +266,7 @@ export default {
               that.questionList.push(data2)
 
             }
+
             // let data = {
             //   answer: result,
             //   msgid: res.data.msg
@@ -425,8 +391,9 @@ export default {
       this.word=this.input
       this.input = ''
       // this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
-      this.$http.post('https://can.xmduruo.com:4000/wechatroutine/test.do',{
+      this.$http.post('http://40.73.102.21/wechatroutine/test.do',{
       // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/moxing.do',{
+      // this.$http.post('http://40.73.102.21/wechatroutine/moxing.do',{
         'word':this.word,
         'sessionId':global_.sessionId
       },{emulateJSON:true})
@@ -465,66 +432,28 @@ export default {
           result = result.replace(/void0/g,';')
           result = result.replace(/\\\"\s/g, '"')
           result = result.replace(/\\\"/g, '"')
-          console.log('after', { result })
-
-          // 图片
-          var  imgreg= /##\d+##/g;
-          var img
-          while((img = imgreg.exec(result))!=null ){
-            this.imgPreArr.push(img)
-            img = img.toString().replace(/##/g,"");
-            this.imgArr.push(img)
-          }
-
           // 多段文字
-          if(result.split('$$').length>1){
-            for(var i =0;i<result.split('$$').length;i++){
-              let datai = {
-                answer:result.split('$$')[i],
-                msgid:res.data.msg
+          if(result.split('##').length>1){
+            for(var i =0;i<result.split('##').length;i++){
+              if(result.split('##')[i].length>0){
+                let datai = {
+                  answer:result.split('##')[i],
+                  msgid:res.data.msg
+                }
+                this.questionList.push(datai)
+                setTimeout(() => {
+                  this.$refs.chatContent.scrollTop = 99999
+                }, 50)
               }
-              this.questionList.push(datai)
             }
-          // 放图片
-          }else if(this.imgArr.length>0){
-            for (var i=0;i<this.imgArr.length;i++){
-              // console.log("img"+this.imgPre)
-              this.imgPre=this.imgPreArr[i];
-              this.result =result;
-              this.msgid = res.data.msg
-              this.$http.post('http://40.73.102.21/wxpicture/pictureImgId.do',{
-                'imgId':this.imgArr[i]
-              },{emulateJSON:true})
-                .then((res) => {
-                  data=res.data.data.base64Picture
-                  console.log("imgPre"+this.imgPre)
-
-                   img ="<img src='data:image/png;base64,"+data+"' onclick='clickImg(this)' width='200px' height='200px'></img>";
-                  // this.result=this.result.replace(this.imgPre,"<img src='data:image/png;base64,"+data+"' onclick='clickImg(this)'></img>");
-                  console.log("result"+this.result)
-                  let data = {
-                    answer: img,
-                    msgid: this.msgid
-                  }
-                  this.questionList.push(data)
-
-                  setTimeout(() => {
-                    this.$refs.chatContent.scrollTop = 99999
-                  }, 50)
-
-                })
-            }
-            this.imgArr=[];
-            this.imgPreArr=[];
-          } else {
+          // 先放文字
+          }else if(result.length>0){
             let data = {
               answer: result,
               msgid: res.data.msg
             }
             this.questionList.push(data)
-
           }
-
           this.word=''
 
           this.input = ''
@@ -534,7 +463,6 @@ export default {
           setTimeout(() => {
             this.$refs.chatContent.scrollTop = 99999
           }, 50)
-
           // }, 50)
         })
       // axios.post('https://can.xmduruo.com:4000/wechatroutine//byWord.do', word)
