@@ -227,6 +227,16 @@ export default {
                     "<a href='"+url2+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
               }
             }
+
+            // url替换
+            var  reg4 =/https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)/g
+            var url3
+            while((url3= reg4.exec(result))!=null){
+              result = result
+                .replace(url3,
+                  "<a href='"+url3+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
+            }
+
             result = result.replace(/\\r\\n/g, "<br/>");
             result = result.replace(/\\n/g, "<br/>");
             result = result.replace(/void0/g,';')
@@ -424,7 +434,14 @@ export default {
                     "<a href='"+url2+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
               }
           }
-          // 替换网址
+          // 替换网址  /^https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*/g
+          var  reg4 =/https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)/g
+          var url3
+          while((url3= reg4.exec(result))!=null){
+            result = result
+              .replace(url3,
+                "<a href='"+url3+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
+          }
           //这里的reg就是上面的正则表达式
           result = result.replace(/\\r\\n/g, '<br/>');
           result = result.replace(/\\n/g, '<br/>');
