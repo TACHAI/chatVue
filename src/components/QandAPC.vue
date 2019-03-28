@@ -196,10 +196,10 @@ export default {
           that.$refs.chatContent.scrollTop = 99999
         }, 50)
         // 现在moxing改成了test
-        // that.$http.post('http://40.73.102.21/wechatroutine/moxing.do',{
+        that.$http.post('http://40.73.102.21/wechatroutine/moxing.do',{
         //   that.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
         // 现在test改成了develop
-        that.$http.post('http://40.73.102.21/wechatroutine/test.do',{
+        // that.$http.post('http://40.73.102.21/wechatroutine/test.do',{
           'word':val,
           'sessionId':global_.sessionId
         },{emulateJSON:true})
@@ -229,12 +229,13 @@ export default {
             }
 
             // url替换
-            var  reg4 =/https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)/g
+            var  reg4 =/https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*/g
+            var  reg4 =/https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*/g
             var url3
             while((url3= reg4.exec(result))!=null){
               result = result
-                .replace(url3,
-                  "<a href='"+url3+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
+                .replace(url3[0],
+                  "<a href='"+url3[0]+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
             }
 
             result = result.replace(/\\r\\n/g, "<br/>");
@@ -401,9 +402,9 @@ export default {
       this.word=this.input
       this.input = ''
       // this.$http.post('http://webbot.xzfwzx.xuhui.gov.cn/admin/wechatroutine/webWord.do',{
-      this.$http.post('http://40.73.102.21/wechatroutine/test.do',{
+      // this.$http.post('http://40.73.102.21/wechatroutine/test.do',{
       // this.$http.post('https://can.xmduruo.com:4000/wechatroutine/moxing.do',{
-      // this.$http.post('http://40.73.102.21/wechatroutine/moxing.do',{
+      this.$http.post('http://40.73.102.21/wechatroutine/moxing.do',{
         'word':this.word,
         'sessionId':global_.sessionId
       },{emulateJSON:true})
@@ -435,12 +436,15 @@ export default {
               }
           }
           // 替换网址  /^https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*/g
-          var  reg4 =/https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)/g
+          var  reg4 =/https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*/g
           var url3
           while((url3= reg4.exec(result))!=null){
+            // console.log("url3"+url3)
+            console.log("url3"+url3[0])
+            // console.log("result"+result)
             result = result
-              .replace(url3,
-                "<a href='"+url3+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
+              .replace(url3[0],
+                "<a href='"+url3[0]+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
           }
           //这里的reg就是上面的正则表达式
           result = result.replace(/\\r\\n/g, '<br/>');

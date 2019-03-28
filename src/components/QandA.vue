@@ -519,12 +519,12 @@
             }
 
             // 替换网址  /^https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*/g
-            var  reg4 =/https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)/g
+            var  reg4 =/https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*/g
             var url3
             while((url3= reg4.exec(result))!=null){
               result = result
-                .replace(url3,ß
-                  "<a href='"+url3+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
+                .replace(url3[0],
+                  "<a href='"+url3[0]+"' target='_blank'><font color='blue'>请点这里哦~</font></a>");
             }
 
             // 这里的reg就是上面的正则表达式
